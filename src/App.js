@@ -6,7 +6,7 @@ function App() {
       <header className="App-header">
         <h1>Welcome to My Custom React App!</h1>
         <p>
-          Hi! There...
+          Hi! There... this is app version v3
         </p>
         <a
           className="App-link"
