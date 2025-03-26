@@ -2,17 +2,18 @@ version: 0.2
 
 env:
   variables:
-    DOCKER_IMAGE: deepanshu1411/react-sample-app:latest  # Update with your Docker Hub username and image name
+    DOCKER_IMAGE: deepanshu1411/react-sample-app:latest  # Your Docker Hub image name (username/repository:tag)
   secrets-manager:
-    DOCKER_HUB_USERNAME: dockerhub/creds:username  # Replace 'docker-hub-credentials' with your secret name
-    DOCKER_HUB_PASSWORD: dockerhub/creds:password  # Replace 'docker-hub-credentials' with your secret name
-  image: aws/codebuild/standard:5.0  # This is the standard AWS CodeBuild image which supports Docker
+    DOCKER_HUB_USERNAME: dockerhub/creds:username  # Replace 'dockerhub/creds' with your secret name and the field name for username
+    DOCKER_HUB_PASSWORD: dockerhub/creds:password  # Replace 'dockerhub/creds' with your secret name and the field name for password
+  image: aws/codebuild/standard:5.0  # This is the AWS CodeBuild image that supports Docker
 
 phases:
   install:
     commands:
       - echo "Installing dependencies"
-      - $(aws ecr get-login --no-include-email --region $AWS_REGION)
+      # Docker Hub login using Secrets Manager values
+      - echo $DOCKER_HUB_PASSWORD | docker login --username $DOCKER_HUB_USERNAME --password-stdin
 
   build:
     commands:
@@ -22,5 +23,4 @@ phases:
   post_build:
     commands:
       - echo "Pushing the Docker image to Docker Hub"
-      - echo $DOCKER_HUB_PASSWORD | docker login --username $DOCKER_HUB_USERNAME --password-stdin
       - docker push $DOCKER_IMAGE
